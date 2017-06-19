@@ -15,15 +15,25 @@ from pox.lib.addresses import EthAddr
 from collections import namedtuple
 import os
 ''' Add your imports here ... '''
-
+import csv
 
 
 log = core.getLogger()
-policyFile = "%s/pox/pox/misc/firewall-policies.csv" % os.environ[ 'HOME' ]  
+policyFile = "%s/CSC485A/pox/pox/misc/firewall-policies.csv" % os.environ[ 'HOME' ]  
 
 ''' Add your global variables here ... '''
-
-
+with open(policyFile) as csvfile:
+    spamreader = csv.reader(csvfile, delimiter=',')
+    mac_0 = []
+    mac_1 = []
+    count = 0
+    for row in spamreader:
+	if(count>0):
+            mac_0.append(row[1])
+            mac_1.append(row[2])
+	count = count +1
+    
+    
 
 class Firewall (EventMixin):
 
@@ -33,6 +43,8 @@ class Firewall (EventMixin):
 
     def _handle_ConnectionUp (self, event):    
         ''' Add your logic here ... '''
+	#print mac_0
+	#print mac_1
         
 
     
