@@ -33,7 +33,15 @@ with open(policyFile) as csvfile:
             mac_1.append(row[2])
 	count = count +1
     
-    
+"""
+    addr = '00:00:00:00:00:01'
+    index = 0
+    for mac in mac_0:
+	if addr == mac:
+	    print "yes"
+	    break
+	index = index+1
+"""    
 
 class Firewall (EventMixin):
 
@@ -43,10 +51,25 @@ class Firewall (EventMixin):
 
     def _handle_ConnectionUp (self, event):    
         ''' Add your logic here ... '''
+	"""
 	#print mac_0
 	#print mac_1
-        
+	for src, dst in zip(mac_0, mac_1):
+	    #print src, dst
+	    match = of.ofp_match()
+	    match.dl_src = src
+	    match.dl_dst = dst
+	    print match
+        """
+	
+	fm = of.ofp_flow_mod()
+	fm.match.dl_src = EthAddr("00:00:00:00:00:01")
+	fm.match.dl_dst = EthAddr("00:00:00:00:00:02")
 
+	# I tried all actions in ofp_action_output, found out that OFPP_TABLE works
+	# reference from https://openflow.stanford.edu/display/ONL/POX+Wiki
+	fm.actions.append(of.ofp_action_output(port = of.OFPP_TABLE))
+	event.connection.send(fm)
     
         log.debug("Firewall rules installed on %s", dpidToStr(event.dpid))
 
